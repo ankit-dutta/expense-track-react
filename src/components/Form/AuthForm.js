@@ -1,12 +1,23 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
+import AuthContext from "../../store/auth-context";
 import './AuthForm.css'
 
 const AuthForm =()=>{
+
    const emailRef = useRef()
    const passwordRef = useRef()
    const confrmPasswordRef = useRef()
 
-   const [islogin , setislogin] = useState();
+   const authctx = useContext(AuthContext)
+   const history = useHistory();
+
+   const [islogin , setIsLogin] = useState(true);
+   const [isLoading , setIsLoading] = useState(false);
+
+   const switchAuthModeHandler = () => {
+    setIsLogin((prevState) => !prevState);
+  };
 
 
    const submitHadler =(event)=>{
@@ -14,13 +25,19 @@ const AuthForm =()=>{
       
       const enteredEmail = emailRef.current.value
       const enteredPassword = passwordRef.current.value
-      const enteredCnfrmPassword = confrmPasswordRef.current.value
-      console.log(enteredEmail , enteredCnfrmPassword, enteredPassword);
+      // const enteredCnfrmPassword = confrmPasswordRef.current.value
+      // console.log(enteredEmail , enteredCnfrmPassword, enteredPassword);
+
+      setIsLoading(true)
+      let url;
 
       if(islogin){
-
+        url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FIREBASE_KEY}`
       } else{
-         fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_KEY}`,{
+        url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_KEY}`
+      }
+      
+         fetch(url,{
           method:"POST",
           body:JSON.stringify({
             email:enteredEmail,
@@ -31,8 +48,10 @@ const AuthForm =()=>{
             'Content-Type' : 'application/json'
           }
          }).then(res =>{
+          setIsLoading(false)
           if(res.ok){
             console.log("successfully registered")
+            return res.json();
   
           }else{
           return  res.json().then(data =>{
@@ -41,14 +60,21 @@ const AuthForm =()=>{
             if(data && data.error && data.error.message){
               errorMessage = data.error.message
             }
-              console.log(data)
 
-              alert(errorMessage)
+              throw new Error(errorMessage);
+
             })
           }
+         }).then(data => {
+          console.log(data)
+          console.log('succesfully login')
+          authctx.login(data.idToken)
+           history.push("/welcome")
+         }).catch(err =>{
+            alert(err.message)
          })
       }
-    }
+    
 
     
 
@@ -57,7 +83,7 @@ const AuthForm =()=>{
           <div className="form-container">
           
             <form onSubmit={submitHadler}>
-            <h1>SIGN UP</h1>
+            <h1>{islogin ? 'Login' :'SIGN UP'}</h1>
               <div class="icon">
                 <i class="fas fa-user-circle"></i>
               </div>
@@ -76,26 +102,28 @@ const AuthForm =()=>{
                 <input type="password" required ref={passwordRef}/>
                 </div>
 
-                <div>
+               { !islogin && <div>
                 <label><strong> Confirm Password </strong></label>
                 <input type="password" required ref={confrmPasswordRef}/>
-                </div>
+                </div>}
                 
                 </div>
 
                 <div>
                 
-                <button type="submit"><strong> Signup </strong></button>
+                 {!isLoading  &&  <button className="action" type="submit">{islogin? 'Login' : 'Create Account'}</button>}  
+                 {isLoading && <p>Sending request....</p>}
                 </div>
 
-                <div>
-                 <p> <strong>already having account?<span><button>Login</button></span></strong> </p>
-                </div>
-
+              
                 </div>
 
             </form>
           </div>
+               <div className="action">
+               <button onClick={switchAuthModeHandler} className="toggle togglebtn">{islogin ? "Don't have an account? Sign up!": "Have an account? Login" }</button>
+                </div>
+
         </>
     )
 }

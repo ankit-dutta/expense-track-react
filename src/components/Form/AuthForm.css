@@ -37,6 +37,15 @@
     cursor: grab;
     width: 48%;
     }
+    .togglebtn{
+        background-color: #4286f4;
+        color: white;
+        padding: 14px 0;
+        margin: 10px 0;
+        border: none;
+        cursor: grab;
+        width: 36%;
+    }
     h1 {
     text-align:center;
     font-size:18;
@@ -57,10 +66,68 @@
     padding-top: 0;
     padding-right: 15px;
     }
+
+
+
+
+    .actions {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .actions button {
+        cursor: pointer;
+        padding: 30px;
+        font: inherit;
+        color: black;
+        background-color: rgba(29, 171, 226, 0.956);
+        border: 1px solid black;
+        border-radius: 4px;
+        padding: 0.5rem 2.5rem;
+      }
+      
+      .actions button:hover {
+        background-color: #433abb;
+        border-color: #873abb;
+      }
+      
+      .actions .toggle {
+        margin-top: 1rem;
+        background-color: transparent;
+        color: black;
+        border: none;
+        padding: 0.15rem 1.5rem;
+      }
+      
+      .actions .toggle:hover {
+        background-color: transparent;
+        color: yellow;
+      }
+      .passwordbutton .toggle:hover {
+        background-color: transparent;
+        color: blue;
+      }
+
+
+
+
+
+
     /* Change styles for span on extra small screens */
     @media screen and (max-width: 300px) {
     span.psw {
     display: block;
     float: none;
+    }
+    .togglebtn{
+        background-color: #4286f4;
+        color: white;
+        padding: 14px 0;
+        margin: 10px 0;
+        border: none;
+        cursor: grab;
+        width: 36%;
     }
 }
