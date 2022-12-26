@@ -9,6 +9,29 @@ const Profile = () =>{
 //   console.log("token", authCtx.token)
 //   const token = localStorage.getItem("token");
 
+fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.REACT_APP_FIREBASE_KEY}`,{
+    method:"POST",
+    body:JSON.stringify({
+        idToken:authCtx.token
+    }),
+    headers:{
+        'Content-Text':'application/json'
+    }
+}).then((res)=>{
+    if(res.ok){
+        return res.json();
+    }else {
+        return res.json().then((data)=>{
+            let errorMessage = "data could not be fetched" 
+            throw new Error(errorMessage)
+        })
+    }
+}).then((data)=>{
+    console.log('Profile details shon');
+    console.log(data.user)
+    
+})
+
 
     const updateHandler = (event) =>{
         event.preventDefault()
