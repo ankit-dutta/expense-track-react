@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import AuthContext from '../store/auth-context';
 import './Welcome.css'
 
@@ -7,6 +7,14 @@ import './Welcome.css'
 const Welcome = () =>{
 
     const authctx = useContext(AuthContext);
+    const history = useHistory();
+
+
+   const logoutHandler =() =>{
+        history.replace('/auth')
+        console.log("Logout Succesfully")
+        localStorage.clear();
+    }
 
    const verifyHandler = () =>{
     fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${process.env.REACT_APP_FIREBASE_KEY}`,{
@@ -55,11 +63,16 @@ const Welcome = () =>{
             </div>
             <hr />
 
-
             <section>
-                <p>Verify your email</p>
-                <button onClick={verifyHandler} >Click here</button>
+                <button onClick={logoutHandler} className='logout-btn'>Logout</button>
             </section>
+
+            <center>
+            <section className='email-section'>
+                <p className='email-para'> You Need To Verify your email</p>
+                <button onClick={verifyHandler} className="email-btn" >Click here</button>
+            </section>
+            </center>
 
         </div>
         </>
