@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import AuthForm from './components/Form/AuthForm';
+import Profile from './pages/Profile';
 import Welcome from './pages/Welcome';
 import AuthContext from './store/auth-context';
 
@@ -23,8 +24,12 @@ function App() {
               <AuthForm />
             </Route>
 
-         <Route path="/welcome">
+            <Route path="/welcome">
               <Welcome />
+            </Route>
+
+            <Route path= '/profile'>
+              <Profile />
             </Route>
               
         </Switch>

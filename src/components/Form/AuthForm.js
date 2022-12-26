@@ -55,7 +55,7 @@ const AuthForm =()=>{
   
           }else{
           return  res.json().then(data =>{
-
+            console.log(data)
             let errorMessage = 'Authentication failed';
             if(data && data.error && data.error.message){
               errorMessage = data.error.message
@@ -67,6 +67,8 @@ const AuthForm =()=>{
           }
          }).then(data => {
           console.log(data)
+          localStorage.setItem("email", enteredEmail);
+
           console.log('succesfully login')
           authctx.login(data.idToken)
            history.push("/welcome")
@@ -118,11 +120,18 @@ const AuthForm =()=>{
               
                 </div>
 
+              
+
             </form>
           </div>
-               <div className="action">
+              
+              
+                <div className="action">
+                <center>
                <button onClick={switchAuthModeHandler} className="toggle togglebtn">{islogin ? "Don't have an account? Sign up!": "Have an account? Login" }</button>
+               </center>
                 </div>
+                
 
         </>
     )

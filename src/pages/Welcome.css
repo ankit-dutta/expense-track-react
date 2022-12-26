@@ -1,0 +1,12 @@
+.welcome-heading{
+    display: flex;
+    justify-content: space-between;
+}
+
+.left-heading{
+   font-size: 1rem;
+}
+
+.right-heading{
+    font-size: 1rem;
+}

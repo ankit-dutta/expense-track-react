@@ -1,0 +1,28 @@
+.contact-heading{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cncl-btn{
+    width: 15%;
+    height: 20%;
+    background-color: rgba(230, 34, 34, 0.842);
+    border-radius: 7%;
+}
+.cncl-btn:hover{
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid rgba(230, 34, 34, 0.842);
+    color: black;
+    font-weight: 600;
+}
+
+.update-btn{
+    width: 15%;
+    height: 20%;
+    background-color: rgba(43, 197, 159, 0.959);
+    border-radius: 7%;
+}
+
+
+

@@ -14,7 +14,7 @@
     form {
     border: 5px solid #f1f1f1;
     }
-    input[type=email], input[type=password]  {
+    input[type=email], input[type=password], input[type=text]  {
     width: 100%;
     padding: 16px 8px;
     margin: 8px 0;
@@ -36,6 +36,7 @@
     border: none;
     cursor: grab;
     width: 48%;
+   
     }
     .togglebtn{
         background-color: #4286f4;
@@ -44,7 +45,7 @@
         margin: 10px 0;
         border: none;
         cursor: grab;
-        width: 36%;
+        width: 25%;
     }
     h1 {
     text-align:center;
