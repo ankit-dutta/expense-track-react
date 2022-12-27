@@ -75,6 +75,11 @@ const Welcome = () =>{
             </center>
 
         </div>
+
+        <div>
+            <h1>Track your Expense 📝</h1>
+            <Link to='/expense' >Click Here</Link>
+        </div>
         </>
     )
 }

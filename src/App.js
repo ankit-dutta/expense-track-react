@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import AuthForm from './components/Form/AuthForm';
+import ExpenseTrack from './pages/Expenses/ExpenseTrack';
 import ForgetPassword from './pages/ForgetPassword';
 import Profile from './pages/Profile';
 import Welcome from './pages/Welcome';
@@ -35,6 +36,10 @@ function App() {
 
             <Route path= '/forget-password' exact>
               <ForgetPassword />
+            </Route>
+
+            <Route path= '/expense' exact>
+              <ExpenseTrack />
             </Route>
               
         </Switch>
