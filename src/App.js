@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import AuthForm from './components/Form/AuthForm';
+import ForgetPassword from './pages/ForgetPassword';
 import Profile from './pages/Profile';
 import Welcome from './pages/Welcome';
 import AuthContext from './store/auth-context';
@@ -30,6 +31,10 @@ function App() {
 
             <Route path= '/profile'>
               <Profile />
+            </Route>
+
+            <Route path= '/forget-password' exact>
+              <ForgetPassword />
             </Route>
               
         </Switch>

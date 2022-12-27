@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 import './AuthForm.css'
 
@@ -112,6 +112,10 @@ const AuthForm =()=>{
                 </div>
 
                 <div>
+                  <Link to='/forget-password'>Forgot Password</Link>
+                </div>
+
+                <div>
                 
                  {!isLoading  &&  <button className="action" type="submit">{islogin? 'Login' : 'Create Account'}</button>}  
                  {isLoading && <p>Sending request....</p>}
@@ -131,6 +135,13 @@ const AuthForm =()=>{
                <button onClick={switchAuthModeHandler} className="toggle togglebtn">{islogin ? "Don't have an account? Sign up!": "Have an account? Login" }</button>
                </center>
                 </div>
+                
+
+                {/* <div className="action">
+                <center>
+               <button onClick={switchAuthModeHandler} className="toggle togglebtn">Forgot Password</button>
+               </center>
+                </div> */}
                 
 
         </>
