@@ -1,26 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import ExpenseList from "./ExpenseList";
-
+import { useEffect,  useState } from "react";
+import './ExpenseTrack.css'
 
 const ExpenseTrack = () => {
 
-  const dummyExpense = [
-    {
-      id : "a1",
-      money: "100",
-      description: "For health and school",
-      category: "others",
-    }
-  ]
 
-  const [expense , setExpense] = useState([dummyExpense]);
+  const [expense , setExpense] = useState([]);
+  const [category, setCategory] = useState("");
+  const [amount,setAmount] = useState("");
+  const [description,setDescription] = useState("");
+  const [editId , setEditId] = useState("");
+  const [editForm, setEditForm] = useState(false);
   const [reload,setReload] = useState(false)
 
+  const moneyHandler = (event) => {
+    setAmount(event.target.value);
+  };
 
-    const amountRef = useRef();
-    const descriptionRef = useRef();
-    const categoryRef = useRef();
-
+  const descriptionHandler = (event) => {
+    setDescription(event.target.value);
+  };
+  const categoryHandler = (event) => {
+    setCategory(event.target.value);
+  };
     //GET REQUEST
     useEffect(()=>{
       fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses.json`,{
@@ -45,7 +46,7 @@ const ExpenseTrack = () => {
 
         let d = {
           id : key,
-          money : data[key].money,
+          amount : data[key].amount,
           description : data[key].description,
           category : data[key].category
         }
@@ -62,25 +63,33 @@ const ExpenseTrack = () => {
 
     const addexpenseHandler = (event) =>{
           event.preventDefault()
-        const enteredAmount = amountRef.current.value;
-        const enteredDescription = descriptionRef.current.value;
-        const enteredCategory = categoryRef.current.value;
 
-        console.log("submit", enteredAmount,enteredCategory,enteredDescription)
 
-      const newExpense = {
-        id : Math.random().toString(),
-        money : enteredAmount,
-        description : enteredDescription,
-        category : enteredCategory
-      }
+      const expenseData = {
+          amount,
+          description,
+          category
+      
+      };
        
       
       // POST REQUEST
-
+      if(editId){
+        fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses/${editId}.json`,{
+          method:"PUT",
+          body: JSON.stringify(expenseData),
+          headers : {
+            "Content-Type" : "application/json",
+          },
+        }).then((res)=>{
+          if(res.ok){
+            setReload(true);
+          }
+        });
+      }else{
       fetch('https://expense-track-react-default-rtdb.firebaseio.com/Expenses.json',{
         method: "POST",
-        body: JSON.stringify(newExpense),
+        body: JSON.stringify(expenseData),
         headers : {
           "Content-Type" : "application/json",
         },
@@ -88,35 +97,87 @@ const ExpenseTrack = () => {
         if(res.ok){
           alert("data sent to the backend");
            console.log(res);
+           setReload(true)
            return res.json();
         }else{
           return res.json(data =>{
             throw new Error (data.error.message);
           })
         }
+      }).catch(err=>{
+        alert(err.message);
       })
 
-        amountRef.current.value = "";
-        descriptionRef.current.value = "";
-        categoryRef.current.value = "";
     }
+    }
+
+    //Delete 
+
+    const deleteListHandler = (id) =>{
+        const deleted = expense.filter((item)=>{
+          return item.id !== id;
+        });
+        setExpense(deleted);
+        console.log(deleted);
+
+        fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses/${id}.json`,{
+          method :"DELETE",
+          headers:{
+            "Content-Type": "application/json"
+          }
+
+        }).then((res)=>{
+          if(res.ok){
+            alert("Expense Deleted");
+            return res.json();
+          }else {
+            return res.json((data)=>{
+              throw new Error(data.err.message);
+            })
+          }
+        })
+    }
+
+    const editHandler = (editId) => {
+      console.log(editId);
+      setEditId(editId);
+      setEditForm(true);
+
+      const editData = expense.filter((item)=>{
+        return item.id === editId;
+      })
+
+      console.log(editData);
+
+      editData.map((item)=>{
+        setAmount(item.amount);
+        setCategory(item.category);
+        setDescription(item.description);
+        return;
+      })
+    }
+
+    
 
     return(
         <>
           <h1>expense page</h1>
 
+        <center>
           <form onSubmit={addexpenseHandler}>
 
-            <label>Money Spent</label>
-            <input type = 'number' ref={amountRef} />
+            <label><strong>Money Spent</strong></label> &nbsp; &nbsp;
+            <input id= "expenseMoney" type = 'number' value = {amount}  onChange={(event) => moneyHandler(event)} />
+
+            <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <label><strong>Description</strong></label>&nbsp; &nbsp; &nbsp;
+            <input id="expenseDescription" type = "text" value={description} onChange = {(event) => {descriptionHandler(event)}} />
 
             <br />
-            <label>Description</label>
-            <input type = "text" ref={descriptionRef} />
 
-            <label for="category">Choose a category:</label>
+            <label for="category"><strong>Select category</strong></label>&nbsp; &nbsp;
 
-            <select name="category" id="category" ref={categoryRef}>
+            <select name="category" id="expenseCategory" value={category} onChange={(event) => categoryHandler(event)}>
             <option value="food">Food</option>
             <option value="Petrol">Petrol</option>
             <option value="Movie">Movie</option>
@@ -128,10 +189,21 @@ const ExpenseTrack = () => {
             <button type="submit">Submit</button>
             
           </form>
-
-        <ExpenseList items = {expense} />
-
          
+
+
+        <h1>Records</h1>
+        {expense.map((item)=>{
+          return (
+            <ul start = "circle" className="expense-list-container" key={item.id}>
+              <li className="expense-list">Money : {item.amount} ||  Description: {item.description} || Category: {item.category} </li>
+              <button className="edit-btn" onClick={() => editHandler(item.id)}>Edit</button> &nbsp; &nbsp;
+              <button className="delete-btn" onClick={() => deleteListHandler(item.id)}>Delete</button>
+            </ul>
+          )
+        })}
+
+</center>
 
 
         </>
