@@ -1,11 +1,64 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import ExpenseList from "./ExpenseList";
 
 
 const ExpenseTrack = () => {
 
+  const dummyExpense = [
+    {
+      id : "a1",
+      money: "100",
+      description: "For health and school",
+      category: "others",
+    }
+  ]
+
+  const [expense , setExpense] = useState([dummyExpense]);
+  const [reload,setReload] = useState(false)
+
+
     const amountRef = useRef();
     const descriptionRef = useRef();
     const categoryRef = useRef();
+
+    //GET REQUEST
+    useEffect(()=>{
+      fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses.json`,{
+      method : 'GET',
+      headers :{
+        "Content-Type" : "application/json",
+      }
+    }).then((res)=>{
+      if(res.ok){
+        console.log(res);
+        return res.json();
+      }
+    }).catch((err)=>{
+      console.log(err)
+    }).then((data)=>{
+      console.log(data);
+
+      const storeData = [];
+      
+      for(let key in data){
+        console.log(key);
+
+        let d = {
+          id : key,
+          money : data[key].money,
+          description : data[key].description,
+          category : data[key].category
+        }
+
+        storeData.unshift(d)  //pusing the elemets in storedata arr at starting
+      }
+
+      setExpense([...storeData]);
+      console.log(storeData)
+    });
+    },[reload])
+    
+
 
     const addexpenseHandler = (event) =>{
           event.preventDefault()
@@ -15,12 +68,37 @@ const ExpenseTrack = () => {
 
         console.log("submit", enteredAmount,enteredCategory,enteredDescription)
 
-        // const obj = {
-        //     amount : enteredAmount,
-        //     description : enteredDescription,
-        //     category : enteredCategory
+      const newExpense = {
+        id : Math.random().toString(),
+        money : enteredAmount,
+        description : enteredDescription,
+        category : enteredCategory
+      }
+       
+      
+      // POST REQUEST
 
-        // }
+      fetch('https://expense-track-react-default-rtdb.firebaseio.com/Expenses.json',{
+        method: "POST",
+        body: JSON.stringify(newExpense),
+        headers : {
+          "Content-Type" : "application/json",
+        },
+      }).then((res)=>{
+        if(res.ok){
+          alert("data sent to the backend");
+           console.log(res);
+           return res.json();
+        }else{
+          return res.json(data =>{
+            throw new Error (data.error.message);
+          })
+        }
+      })
+
+        amountRef.current.value = "";
+        descriptionRef.current.value = "";
+        categoryRef.current.value = "";
     }
 
     return(
@@ -47,11 +125,11 @@ const ExpenseTrack = () => {
 
             <br />
 
-            <button>Add</button>
-
-
+            <button type="submit">Submit</button>
             
           </form>
+
+        <ExpenseList items = {expense} />
 
          
 

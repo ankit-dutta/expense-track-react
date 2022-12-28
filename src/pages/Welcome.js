@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import AuthContext from '../store/auth-context';
+import ExpenseTrack from './Expenses/ExpenseTrack';
 import './Welcome.css'
 
 
@@ -77,8 +78,10 @@ const Welcome = () =>{
         </div>
 
         <div>
-            <h1>Track your Expense 📝</h1>
-            <Link to='/expense' >Click Here</Link>
+            {/* <h1>Track your Expense 📝</h1>
+            <Link to='/expense' >Click Here</Link> */}
+
+            <ExpenseTrack />
         </div>
         </>
     )
