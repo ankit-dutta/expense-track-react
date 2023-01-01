@@ -1,16 +1,26 @@
 import { useEffect,  useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { expenseActions } from "../../store/expenseReducer";
 import './ExpenseTrack.css'
 
 const ExpenseTrack = () => {
-
 
   const [expense , setExpense] = useState([]);
   const [category, setCategory] = useState("");
   const [amount,setAmount] = useState("");
   const [description,setDescription] = useState("");
   const [editId , setEditId] = useState("");
-  const [editForm, setEditForm] = useState(false);
+  // const [editForm, setEditForm] = useState(false);
   const [reload,setReload] = useState(false)
+
+  const [data,setData] = useState(null);
+  const [premium, setpremiun] = useState(false);
+  
+
+  const storedExpense = useSelector((state) => state.expense.expense);
+  const TotalExpense = useSelector((state)=> state.expense.totalexpense);
+  const dispatch = useDispatch()
+
 
   const moneyHandler = (event) => {
     setAmount(event.target.value);
@@ -39,41 +49,48 @@ const ExpenseTrack = () => {
     }).then((data)=>{
       console.log(data);
 
-      const storeData = [];
+      if(data !== null){
+        const storeData = [];
       
-      for(let key in data){
-        console.log(key);
-
-        let d = {
-          id : key,
-          amount : data[key].amount,
-          description : data[key].description,
-          category : data[key].category
+        for(let key in data){
+          console.log(key);
+  
+          let d = {
+            id : key,
+            amount : data[key].amount,
+            description : data[key].description,
+            category : data[key].category
+          }
+  
+          storeData.unshift(d)  //pusing the elemets in storedata arr at starting
+          dispatch(expenseActions.totalexpense(data[key].money));
         }
+        dispatch(expenseActions.expense(storeData));
+        setExpense([...storeData]);
+        console.log(storeData);
 
-        storeData.unshift(d)  //pusing the elemets in storedata arr at starting
       }
+      
 
-      setExpense([...storeData]);
-      console.log(storeData)
+      // setExpense([...storeData]);
+      // console.log(storeData)
     });
     },[reload])
     
+    const expenseData = {
+      amount,
+      description,
+      category
+  
+  };
 
 
     const addexpenseHandler = (event) =>{
           event.preventDefault()
 
-
-      const expenseData = {
-          amount,
-          description,
-          category
-      
-      };
        
       
-      // POST REQUEST
+      // PUT REQUEST FOR EDITING
       if(editId){
         fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses/${editId}.json`,{
           method:"PUT",
@@ -86,7 +103,7 @@ const ExpenseTrack = () => {
             setReload(true);
           }
         });
-      }else{
+      } else {
       fetch('https://expense-track-react-default-rtdb.firebaseio.com/Expenses.json',{
         method: "POST",
         body: JSON.stringify(expenseData),
@@ -106,14 +123,26 @@ const ExpenseTrack = () => {
         }
       }).catch(err=>{
         alert(err.message);
-      })
+      }).then(()=> dispatch(expenseActions.addingExpense(expenseData)));
 
     }
-    }
+    };
+
+    useEffect(()=>{
+      if(TotalExpense >= 1000){
+         setpremiun(true);
+      } else {
+        setpremiun(false);
+      }
+    }, [TotalExpense])
+
+    // const activePremiumHandler = () =>{
+    //   setPrimeFeatures(true);
+    // }
 
     //Delete 
 
-    const deleteListHandler = (id) =>{
+    const deleteListHandler = (id ,itemAmount) =>{
         const deleted = expense.filter((item)=>{
           return item.id !== id;
         });
@@ -128,6 +157,8 @@ const ExpenseTrack = () => {
 
         }).then((res)=>{
           if(res.ok){
+            setData(res.ok);
+            dispatch(expenseActions.afterDeleteExpense(itemAmount));
             alert("Expense Deleted");
             return res.json();
           }else {
@@ -141,9 +172,9 @@ const ExpenseTrack = () => {
     const editHandler = (editId) => {
       console.log(editId);
       setEditId(editId);
-      setEditForm(true);
+      // setEditForm(true);
 
-      const editData = expense.filter((item)=>{
+      const editData = storedExpense.filter((item)=>{
         return item.id === editId;
       })
 
@@ -153,8 +184,46 @@ const ExpenseTrack = () => {
         setAmount(item.amount);
         setCategory(item.category);
         setDescription(item.description);
-        return;
-      })
+        // return;
+      });
+
+      if(editId){
+        fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses/${editId}.json`,{
+          method:"PUT",
+          body:JSON.stringify(expenseData),
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then(res => {
+          if(res.ok){
+            setReload(true);
+          }
+        });
+      }else {
+        //post Data
+        fetch(`https://expense-track-react-default-rtdb.firebaseio.com/Expenses.json`,{
+          method: "POST",
+          body:JSON.stringify(expenseData),
+          header:{
+            "Content-Type" : "application/json",
+          },
+        }).then((res) => {
+          if(res.ok){
+            alert("data sent to the backend");
+              dispatch(expenseActions.expense(expenseData));
+              setReload(true);
+              return res.json();
+          }else{
+            return res.json((data) =>{
+              throw new Error(data.error.message);
+            });
+          }
+        }).catch((err) => {
+          alert(err.message);
+        })
+     
+
+      }
     }
 
     
@@ -162,6 +231,7 @@ const ExpenseTrack = () => {
     return(
         <>
           <h1>expense page</h1>
+          {premium && <button>Activate Premium</button>}
 
         <center>
           <form onSubmit={addexpenseHandler}>
@@ -193,17 +263,19 @@ const ExpenseTrack = () => {
 
 
         <h1>Records</h1>
-        {expense.map((item)=>{
+        {storedExpense.map((item)=>{
           return (
             <ul start = "circle" className="expense-list-container" key={item.id}>
-              <li className="expense-list">Money : {item.amount} ||  Description: {item.description} || Category: {item.category} </li>
+              <li className="expense-list">Money :  ₹{item.amount} ||  Description: {item.description} || Category: {item.category} </li>
               <button className="edit-btn" onClick={() => editHandler(item.id)}>Edit</button> &nbsp; &nbsp;
-              <button className="delete-btn" onClick={() => deleteListHandler(item.id)}>Delete</button>
+              <button className="delete-btn" onClick={() => deleteListHandler(item.id, item.amount)}>Delete</button>
             </ul>
           )
         })}
 
 </center>
+
+<h1>Total Expense :  ₹{TotalExpense}</h1>
 
 
         </>

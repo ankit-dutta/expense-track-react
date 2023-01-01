@@ -74,7 +74,7 @@ const AuthForm =()=>{
 
           console.log('succesfully login')
           // authctx.login(data.idToken)
-          dispatch(authActions.login(data.id.Token))
+          dispatch(authActions.login(data.idToken))
            history.push("/welcome")
          }).catch(err =>{
             alert(err.message)
