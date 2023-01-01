@@ -1,15 +1,18 @@
 import { useContext, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
+import { authActions } from "../../store/auth-redux";
 import './AuthForm.css'
 
 const AuthForm =()=>{
+    const dispatch = useDispatch()
 
    const emailRef = useRef()
    const passwordRef = useRef()
    const confrmPasswordRef = useRef()
 
-   const authctx = useContext(AuthContext)
+  //  const authctx = useContext(AuthContext)
    const history = useHistory();
 
    const [islogin , setIsLogin] = useState(true);
@@ -70,7 +73,8 @@ const AuthForm =()=>{
           localStorage.setItem("email", enteredEmail);
 
           console.log('succesfully login')
-          authctx.login(data.idToken)
+          // authctx.login(data.idToken)
+          dispatch(authActions.login(data.id.Token))
            history.push("/welcome")
          }).catch(err =>{
             alert(err.message)
