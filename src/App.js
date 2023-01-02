@@ -8,6 +8,31 @@ import Profile from './pages/Profile';
 import Welcome from './pages/Welcome';
 import AuthContext from './store/auth-context';
 
+import DarkThemeProvider from './components/Layout/themeProvider';
+import styled from "styled-components";
+import theme from "styled-theming";
+
+export const backgroundColor = theme("theme", {
+  light: "#fff",
+  dark: "#2d2d2d",
+});
+
+export const textColor = theme("theme", {
+  light: "#000",
+  dark: "#fff",
+});
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  font-family: san-serif;
+  background-color: ${backgroundColor};
+  color: ${textColor};`
+;
+
 
 function App() {
 
@@ -15,7 +40,9 @@ function App() {
  const isLoggedin = authctx.isLoggedIn
 
   return (
-    <div className="App">
+    <DarkThemeProvider>
+      <Container>
+    {/* <div className="App"> */}
        <Switch>
 
           <Route path="/" exact>
@@ -44,7 +71,9 @@ function App() {
               
         </Switch>
 
-    </div>
+    {/* </div> */}
+    </Container>
+    </DarkThemeProvider>
   );
 }
 

@@ -1,0 +1,23 @@
+
+
+
+.theme-change-btn{
+    background-color: rgb(192, 24, 24);
+    color: rgb(252, 245, 245);
+    text-align: center;
+    width: 20%;
+    margin-left: 10px;
+    border-radius: 5px;
+    
+}
+
+.csvlink{
+    text-decoration: none;
+    
+    background-color: rgb(18, 128, 60);
+    color: rgb(252, 245, 245);
+    text-align: center;
+    width: 20%;
+    margin-left: 10px;
+    border-radius: 5px;
+}

@@ -1,20 +1,24 @@
 import { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import AuthContext from '../store/auth-context';
+import { authActions } from '../store/auth-redux';
 import ExpenseTrack from './Expenses/ExpenseTrack';
 import './Welcome.css'
 
 
 const Welcome = () =>{
-
+     
     const authctx = useContext(AuthContext);
     const history = useHistory();
+    const dispatch = useDispatch()
 
 
    const logoutHandler =() =>{
         history.replace('/auth')
         console.log("Logout Succesfully")
-        localStorage.clear();
+        localStorage.removeItem("idToken");
+        dispatch(authActions.logout());
     }
 
    const verifyHandler = () =>{

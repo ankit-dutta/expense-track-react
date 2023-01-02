@@ -18,11 +18,11 @@ const expenseSlice = createSlice({
         state.expense = [action.payload, ...state.expense]
     },
     totalexpense(state, action){
-        state.totalexpense = state.totalexpense + action.payload;
+        state.totalexpense = state.totalexpense + +action.payload;
     },
-    // afterDeleteExpense(state, action){
-    //     state.totalexpense = state.totalexpense - +action.payload;
-    // },
+    afterDeleteExpense(state, action){
+        state.totalexpense = state.totalexpense - +action.payload;
+    },
    }
 })
 

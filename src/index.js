@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { AuthContextProvider } from './store/auth-context';
+// import { AuthContextProvider } from './store/auth-context';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -12,7 +12,7 @@ root.render(
  
     <BrowserRouter >
      <Provider store = {store}>
-    <App />
+        <App />
     </Provider>
     </BrowserRouter>
   

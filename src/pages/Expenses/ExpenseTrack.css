@@ -30,3 +30,26 @@ form{
     background-color: rgb(5, 163, 110);
     border-radius: 5px;
 }
+
+
+.premium-btn{
+  background-color: white;
+  color: black;
+  text-align: center;
+  width: 20%;
+  margin-left: 10px;
+  border-radius: 5px;
+}
+
+.record-list{
+ /* border: 1px solid green; */
+ margin-top: 2.8rem;
+ color: rgb(209, 19, 193);
+ font-weight: 600;
+}
+
+
+.record-list h1{
+  color: aqua;
+  font-size: 1.7rem;
+}

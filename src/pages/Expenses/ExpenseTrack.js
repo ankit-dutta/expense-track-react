@@ -1,6 +1,7 @@
 import { useEffect,  useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { expenseActions } from "../../store/expenseReducer";
+import Premium from "../Premium";
 import './ExpenseTrack.css'
 
 const ExpenseTrack = () => {
@@ -15,10 +16,12 @@ const ExpenseTrack = () => {
 
   const [data,setData] = useState(null);
   const [premium, setpremiun] = useState(false);
+  const [primefeatures, setPrimeFeatures] = useState(false);
   
 
   const storedExpense = useSelector((state) => state.expense.expense);
   const TotalExpense = useSelector((state)=> state.expense.totalexpense);
+
   const dispatch = useDispatch()
 
 
@@ -63,7 +66,7 @@ const ExpenseTrack = () => {
           }
   
           storeData.unshift(d)  //pusing the elemets in storedata arr at starting
-          dispatch(expenseActions.totalexpense(data[key].money));
+          dispatch(expenseActions.totalexpense(data[key].amount));
         }
         dispatch(expenseActions.expense(storeData));
         setExpense([...storeData]);
@@ -101,6 +104,7 @@ const ExpenseTrack = () => {
         }).then((res)=>{
           if(res.ok){
             setReload(true);
+            setData(res.data);
           }
         });
       } else {
@@ -130,15 +134,16 @@ const ExpenseTrack = () => {
 
     useEffect(()=>{
       if(TotalExpense >= 1000){
+        console.log("premium account active")
          setpremiun(true);
       } else {
         setpremiun(false);
       }
     }, [TotalExpense])
 
-    // const activePremiumHandler = () =>{
-    //   setPrimeFeatures(true);
-    // }
+    const activatePremiumHandler = () =>{
+      setPrimeFeatures(true);
+    }
 
     //Delete 
 
@@ -159,7 +164,7 @@ const ExpenseTrack = () => {
           if(res.ok){
             setData(res.ok);
             dispatch(expenseActions.afterDeleteExpense(itemAmount));
-            alert("Expense Deleted");
+            // alert("Expense Deleted");
             return res.json();
           }else {
             return res.json((data)=>{
@@ -231,7 +236,8 @@ const ExpenseTrack = () => {
     return(
         <>
           <h1>expense page</h1>
-          {premium && <button>Activate Premium</button>}
+          {premium && <button type = "button" className="premium-btn" onClick={activatePremiumHandler}>Activate Premium</button>}
+          {primefeatures && <Premium />}
 
         <center>
           <form onSubmit={addexpenseHandler}>
@@ -261,7 +267,7 @@ const ExpenseTrack = () => {
           </form>
          
 
-
+      <section className="record-list" >
         <h1>Records</h1>
         {storedExpense.map((item)=>{
           return (
@@ -272,6 +278,7 @@ const ExpenseTrack = () => {
             </ul>
           )
         })}
+        </section>
 
 </center>
 
