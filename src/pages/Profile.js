@@ -1,4 +1,5 @@
 import { useContext, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import AuthContext from '../store/auth-context';
 import './Profile.css';
 
@@ -6,8 +7,14 @@ const Profile = () =>{
     const nameRef = useRef();
     const photoRef = useRef()
     const authCtx = useContext(AuthContext);
+    const history = useHistory()
+
 //   console.log("token", authCtx.token)
 //   const token = localStorage.getItem("token");
+
+const cancelHandler =() =>{
+  history.replace('/welcome')
+}
 
 fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.REACT_APP_FIREBASE_KEY}`,{
     method:"POST",
@@ -96,7 +103,7 @@ fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.e
             <div className="content-container">
                 <div className="contact-heading">
                 <h1>Contact Details</h1>
-                <button className='cncl-btn'>Cancel</button>
+                <button onClick = {cancelHandler} className='cncl-btn'>Cancel</button>
                 </div>
 
                 <div >
